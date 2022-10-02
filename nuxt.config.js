@@ -18,11 +18,16 @@ export default {
       { name: "format-detection", content: "telephone=no" },
     ],
     link: [
-      { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
+      { rel: "preconnect", href: "https://app.snipcart.com" },
+      { rel: "preconnect", href: "https://cdn.snipcart.com" },
       {
         rel: "stylesheet",
         href: "https://cdn.snipcart.com/themes/v3.2.1/default/snipcart.css",
       },
+      { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
+    ],
+    script: [
+      { src: "https://cdn.snipcart.com/themes/v3.2.1/default/snipcart.js" },
     ],
   },
 
@@ -42,7 +47,11 @@ export default {
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
-  modules: ["@nuxtjs/tailwindcss"],
+  modules: ["@nuxtjs/tailwindcss", "@nuxtjs/strapi"],
+  strapi: {
+    entities: ["products", "categories"],
+    url: "http://localhost:1337",
+  },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {},

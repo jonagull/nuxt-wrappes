@@ -1,45 +1,52 @@
 <template>
-  <div class="max-w-screen-2xl mx-auto px-10">
-    <main>
-      <div>
-        <section class="mb-10" v-for="(guide, index) in guides" :key="index">
-          <div class="post-aside mt-4 mb-4">
-            <h3 class="mb-5 underline"><nuxt-link :to="guide.attributes.link">{{ guide.attributes.title }}</nuxt-link></h3>
-            <p>{{ guide.attributes.description }}</p>
+  <div>
+    <div
+      class="m-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-4"
+    >
+      <div
+        v-for="p in products.data"
+        :key="p.id"
+        class="border rounded-lg bg-gray-100 hover:shadow-lg"
+      >
+        <nuxt-link :to="`/products/${p.id}`">
+          <div class="rounded-t-lg bg-white pt-2 pb-2">
+            <img
+              width="275px"
+              class="crop mx-auto rounded-sm"
+              :src="`
+            http://localhost:1337${p.attributes.image.data[0].attributes.url}`"
+            />
           </div>
-          <div class="grid grid-cols-2 sm:grid-cols-3 justify-center gap-8 mb-10">
-            <article class="" v-for="(product, index) in guide.attributes.products" :key="index">
-              <img :src="product.image" :alt="product.name">
-              <p class="font-mono">{{product.name}}</p>
-              <button
-                class="buy-button snipcart-add-item mt-6 py-2 px-4 bg-gradient-to-r from-green-400 to-blue-500 hover:from-pink-500 hover:to-yellow-500 text-white font-bold rounded-full shadow-offset hover:shadow-lg transition duration-300"
-                :data-item-id="product.sku"
-                :data-item-name="product.name"
-                :data-item-price="product.price"
-                :data-item-image="product.image"
-                :data-item-url="`https://snipcart-nuxtjs-pwa.netlify.com/`">
-                {{`$${product.price}`}}
-              </button>
-            </article>
+          <div class="pl-4 pr-4 pb-4 pt-4 rounded-lg">
+            <h4
+              class="mt-1 font-semibold text-base leading-tight truncate text-gray-700"
+            >
+              {{ p.attributes.title }}
+            </h4>
+            <div class="mt-1 text-sm text-gray-700">
+              {{ p.attributes.description }}
+            </div>
+            <div class="mt-1 text-sm text-gray-700">
+              {{ p.attributes.price }}$
+            </div>
           </div>
-        </section>
+        </nuxt-link>
       </div>
-    </main>
+    </div>
   </div>
 </template>
 
 <script>
-import guides from '~/contents/guides/guides.js'
-
 export default {
-  async asyncData ({ route }) {
-    const promises = guides.map(guide => import(`~/contents/guides/${guide}.md`))
-    return { guides: await Promise.all(promises) }
-  },
-  head() {
+  data() {
     return {
-      title: "All posts | Nuxt.js PWA Coffee Shop"
-    }
-  }
-}
+      products: [],
+    };
+  },
+  created: async function () {
+    const res = await fetch("http://localhost:1337/api/products?populate=*");
+    this.products = await res.json();
+    console.log(this.products);
+  },
+};
 </script>
